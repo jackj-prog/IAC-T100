@@ -225,41 +225,48 @@
     .signoff .so-out{margin-left:0;width:100%}
   }
 
-  /* ---------- print: regenerated paper form (QAP07_04_17 layout) ---------- */
+  /* ---------- print: regenerated paper form (QAP07_04_17 layout) ----------
+     One table per part: the thead (logo, title box, customer bar, item
+     header) repeats automatically on every printed page, and every row
+     lives inside one continuous outer box — matching the Word original. */
   #printDoc{display:none}
   @media print{
-    @page{size:A4;margin:12mm 12mm 14mm}
+    @page{size:A4;margin:11mm 12mm 15mm}
     .topbar,main,footer,#toast{display:none !important}
     body{background:#fff}
-    #printDoc{display:block;color:#000;font:11pt/1.32 "Times New Roman",Times,serif}
+    #printDoc{display:block;color:#000;font:10pt/1.25 "Times New Roman",Times,serif}
     #printDoc .pp{page-break-after:always}
     #printDoc .pp:last-child{page-break-after:auto}
-    #printDoc .pp-co{display:flex;align-items:center;gap:14px;margin:0 0 10px}
-    #printDoc .pp-co img{height:11mm;width:auto}
-    #printDoc .pp-co span{font:700 15pt/1.05 Arial,Helvetica,sans-serif}
-    #printDoc table{width:100%;border-collapse:collapse}
-    #printDoc .t-title td{border:1.5pt solid #000;text-align:center;font-weight:700;padding:4pt 6pt}
-    #printDoc .t-title .tt1{font-size:13pt}
-    #printDoc .t-title .tt2{font-size:11.5pt}
-    #printDoc .t-meta td{border:1.5pt solid #000;font-size:10pt;padding:3pt 6pt;font-weight:700}
-    #printDoc h3{font:700 11pt "Times New Roman",Times,serif;text-align:center;margin:10pt 0 4pt}
-    #printDoc .pp-banner{font-weight:700;text-align:center;margin:9pt 0 4pt;font-size:10.5pt}
-    #printDoc .t-items th{border:1pt solid #000;font-size:10pt;padding:2.5pt 4pt;font-weight:700}
-    #printDoc .t-items td{border:1pt solid #000;font-size:9.5pt;padding:2.5pt 4pt;vertical-align:top}
-    #printDoc .t-items .c-no{width:11mm;text-align:center}
-    #printDoc .t-items .c-by{width:20mm;text-align:center}
-    #printDoc .t-items .c-com{width:44mm}
-    #printDoc .t-items tr{page-break-inside:avoid}
-    #printDoc .t-items thead{display:table-header-group}
-    #printDoc .p-note{font-style:italic}
+    #printDoc .pt{width:100%;border-collapse:collapse}
+    #printDoc .pt td,#printDoc .pt th{border:0.75pt solid #000;padding:4pt 5pt;
+      vertical-align:top;font-size:9.5pt;text-align:left;font-weight:400}
+    #printDoc tr.pt-co td{border:none;padding:0 0 9pt}
+    #printDoc .co-in{display:flex;align-items:center;gap:10pt}
+    #printDoc .co-in img{height:12mm;width:auto}
+    #printDoc .co-in span{flex:1;text-align:center;padding-right:22mm;
+      font:700 15pt/1.1 Arial,Helvetica,sans-serif}
+    #printDoc td.pt-t1{border:1.6pt solid #000;text-align:center;font-weight:700;font-size:13pt;padding:5pt}
+    #printDoc td.pt-t2{border:1.6pt solid #000;text-align:center;font-weight:700;font-size:12pt;padding:5pt}
+    #printDoc td.pt-meta{border:1.6pt solid #000;font-weight:700;font-size:10pt;padding:4pt 6pt}
+    #printDoc .m-in{display:flex;justify-content:space-between;gap:8pt}
+    #printDoc .pt th{text-align:center;font-weight:700;font-size:10pt;padding:4pt}
+    #printDoc td.pt-ban{text-align:center;font-weight:700;font-size:10.5pt;padding:9pt 4pt}
+    #printDoc td.pt-sec{text-align:center;font-weight:700;font-size:11pt;padding:11pt 4pt}
+    #printDoc td.c-by{text-align:center}
+    #printDoc .p-hint{font-size:6.5pt;line-height:1.15}
     #printDoc .p-snag{font-weight:700}
-    #printDoc .p-foot{font-size:9.5pt;font-style:italic;text-align:center;margin:6pt 0}
-    #printDoc .p-sign{display:flex;gap:26pt;margin:16pt 0 4pt;font-size:11pt}
-    #printDoc .p-sign .sig{display:inline-block;min-width:52mm;border-bottom:1pt solid #000;padding:0 4pt 1pt}
-    #printDoc .p-early{border:1pt solid #000;margin-top:8pt}
-    #printDoc .p-early .pe-t{border-bottom:1pt solid #000;font-weight:700;text-align:center;padding:2.5pt;font-size:10pt}
-    #printDoc .p-early .pe-b{min-height:20mm;padding:3pt 5pt;font-size:9.5pt;white-space:pre-wrap}
-    #printDoc .pp-pagefoot{display:flex;justify-content:space-between;margin-top:12pt;font-size:8.5pt;color:#222}
+    #printDoc td.pt-foot{text-align:center;font-weight:700;padding:9pt 4pt}
+    #printDoc td.pt-dir{font-weight:700}
+    #printDoc td.pe-box{height:26mm}
+    #printDoc td.pt-sign{padding:20pt 6pt 12pt}
+    #printDoc .s-in{display:flex;gap:34pt;font-size:11pt}
+    #printDoc .s-in .sig{display:inline-block;min-width:50mm;border-bottom:0.9pt solid #000;padding:0 4pt 1pt}
+    #printDoc .pt tr{page-break-inside:avoid}
+    #printDoc .pt thead{display:table-header-group}
+    #printDoc .pt tfoot{display:table-footer-group}
+    #printDoc .pt tfoot td{border:none;text-align:right;padding:5pt 0 0;
+      font:400 7.5pt Arial,Helvetica,sans-serif}
+    #printDoc .pt tfoot b{font-weight:700}
   }
 </style>
 
@@ -1000,75 +1007,112 @@ function esc(s){
   return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;")
     .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 }
-function printCommentCell(rs){
-  const c = rs.comment || "";
-  if(rs.status === "na") return "N/A" + (c ? " — " + esc(c) : "");
-  if(rs.status === "snag") return `<span class="p-snag">SNAG${c ? ":" : ""}</span> ` + esc(c);
-  return esc(c);
+/* Word-original details: underlined Note/RED/TIGHT/REMOVED, bold "completeness".
+   Applied AFTER escaping, so the markup survives. */
+function decoratePrint(t){
+  return t
+    .replace("RED pen", "<u>RED</u> pen")
+    .replace("are TIGHT.", "are <u>TIGHT</u>.")
+    .replace("HAVE BEEN REMOVED.", "HAVE BEEN <u>REMOVED</u>.")
+    .replace("for completeness", "for <b>completeness</b>");
 }
+function printCommentCell(row, rs){
+  const c = rs.comment || "";
+  let v;
+  if(rs.status === "na") v = "N/A" + (c ? " — " + esc(c) : "");
+  else if(rs.status === "snag") v = `<span class="p-snag">SNAG${c ? ":" : ""}</span> ` + esc(c);
+  else v = esc(c);
+  if(row.hint) v = `<div class="p-hint">Document Reference</div>` + v;
+  return v;
+}
+const PRINT_ITEM_HEAD =
+  `<tr><th colspan="2">Item</th><th>Checked By</th><th>Comments</th></tr>`;
+
+function printSection(p, sec, out){
+  if(sec.banner) out.push(`<tr><td colspan="4" class="pt-ban">${esc(sec.banner)}</td></tr>`);
+  if(sec.title) out.push(`<tr><td colspan="4" class="pt-sec">${esc(sec.title)}</td></tr>`);
+  if(sec.banner || sec.title) out.push(PRINT_ITEM_HEAD);
+  const rows = sec.rows;
+  for(let i = 0; i < rows.length; i++){
+    const row = rows[i];
+    if(row.note){
+      out.push(`<tr><td></td><td colspan="3">${esc(row.note)}</td></tr>`);
+      continue;
+    }
+    // a numbered row's cell spans its unnumbered continuation rows (1.1, 1.2)
+    let span = 1;
+    if(row.n){
+      let j = i + 1;
+      while(j < rows.length && !rows[j].note && rows[j].n === ""){ span++; j++; }
+    }
+    const rs = state.rows[row.k] || {};
+    const text = row.editable
+      ? esc(rs.text || "")
+      : (row.lead ? `<b>${esc(row.lead)}</b> ${decoratePrint(esc(row.t))}`
+                  : decoratePrint(esc(row.t)));
+    const numCell = row.n === "" ? "" :
+      `<td${span > 1 ? ` rowspan="${span}"` : ""}>${esc(row.n)}</td>`;
+    out.push(`<tr>${numCell}<td>${text || "&nbsp;"}</td>` +
+      `<td class="c-by">${esc(rs.by || "")}</td><td>${printCommentCell(row, rs)}</td></tr>`);
+  }
+  if(sec.notes && sec.notes.length){
+    const head = sec.notes.slice(0, -1);
+    const last = sec.notes[sec.notes.length - 1];
+    if(head.length)
+      out.push(`<tr><td><u>Note</u></td><td colspan="3">` +
+        head.map(n => decoratePrint(esc(n))).join("<br><br>") + `</td></tr>`);
+    out.push(`<tr><td>${head.length ? "" : "<u>Note</u>"}</td>` +
+      `<td colspan="3">${decoratePrint(esc(last))}</td></tr>`);
+  }
+  if(sec.foot && p.part !== 4)
+    out.push(`<tr><td colspan="4" class="pt-foot">${esc(sec.foot)}</td></tr>`);
+}
+
 function buildPrintDoc(){
   const meta = state.meta;
   const logoSrc = document.querySelector(".brand-logo").src;
   const out = [];
   for(const p of CHECKLIST){
-    out.push(`<section class="pp">`);
-    out.push(`<div class="pp-co"><img src="${logoSrc}" alt="">` +
-      `<span>Industrial Automation &amp; Control Limited</span></div>`);
-    out.push(`<table class="t-title"><tbody>` +
-      `<tr><td class="tt1">IACT100 Checklist</td></tr>` +
-      `<tr><td class="tt2">${esc(p.title)}</td></tr></tbody></table>`);
-    out.push(`<table class="t-meta"><tbody><tr>` +
-      `<td style="width:34%">Customer: ${esc(meta.customer)}</td>` +
-      `<td>Contract No. ${esc(meta.contract)}${meta.items ? " — Items: " + esc(meta.items) : ""}</td>` +
-      `<td style="width:22%">Date: ${fmtDate(meta.date)}</td>` +
-      `</tr></tbody></table>`);
-
-    for(const sec of p.sections){
-      if(sec.title) out.push(`<h3>${esc(sec.title)}</h3>`);
-      if(sec.banner) out.push(`<div class="pp-banner">${esc(sec.banner)}</div>`);
-      out.push(`<table class="t-items"><thead><tr>` +
-        `<th class="c-no"></th><th>Item</th><th class="c-by">Checked By</th>` +
-        `<th class="c-com">Comments</th></tr></thead><tbody>`);
-      for(const row of sec.rows){
-        if(row.note){
-          out.push(`<tr><td class="c-no"></td>` +
-            `<td class="p-note" colspan="3">${esc(row.note)}</td></tr>`);
-          continue;
-        }
-        const rs = state.rows[row.k] || {};
-        const text = row.editable
-          ? esc(rs.text || "")
-          : (row.lead ? `<b>${esc(row.lead)}</b> ${esc(row.t)}` : esc(row.t));
-        out.push(`<tr><td class="c-no">${esc(row.n)}</td>` +
-          `<td>${text || "&nbsp;"}</td>` +
-          `<td class="c-by">${esc(rs.by || "")}</td>` +
-          `<td class="c-com">${printCommentCell(rs)}</td></tr>`);
-      }
-      if(sec.notes)
-        for(const n of sec.notes)
-          out.push(`<tr><td class="c-no"><b>Note</b></td>` +
-            `<td class="p-note" colspan="3">${esc(n)}</td></tr>`);
-      out.push(`</tbody></table>`);
-      if(sec.foot) out.push(`<div class="p-foot">${esc(sec.foot)}</div>`);
+    out.push(`<section class="pp"><table class="pt">` +
+      `<colgroup><col style="width:10%"><col><col style="width:13.5%">` +
+      `<col style="width:19.5%"></colgroup><thead>`);
+    out.push(`<tr class="pt-co"><td colspan="4"><div class="co-in">` +
+      `<img src="${logoSrc}" alt="">` +
+      `<span>Industrial Automation &amp; Control Limited</span></div></td></tr>`);
+    if(p.part === 4){
+      // the original's Final Inspection page has no title box or customer bar
+      out.push(`<tr><td colspan="4" class="pt-t1">${esc(p.title)}</td></tr>`);
+    }else{
+      out.push(`<tr><td colspan="4" class="pt-t1">IACT100 Checklist</td></tr>`);
+      out.push(`<tr><td colspan="4" class="pt-t2">${esc(p.title)}</td></tr>`);
+      out.push(`<tr><td colspan="4" class="pt-meta"><div class="m-in">` +
+        `<span>Customer: ${esc(meta.customer)}</span>` +
+        `<span>Contract No. ${esc(meta.contract)}` +
+        `${meta.items ? " — Items: " + esc(meta.items) : ""}</span>` +
+        `<span>Date: ${fmtDate(meta.date)}</span></div></td></tr>`);
     }
+    out.push(PRINT_ITEM_HEAD);
+    out.push(`</thead><tfoot><tr><td colspan="4">Document No ` +
+      `<b>${DOC_REF}.doc</b></td></tr></tfoot><tbody>`);
+    for(const sec of p.sections) printSection(p, sec, out);
 
     if(p.part === 4){
       const e = state.early || {};
-      out.push(`<table class="t-items"><tbody><tr>` +
-        `<td class="c-no">4.13</td><td><b>Approval for early release</b> — Director signature</td>` +
-        `<td class="c-by">${esc(e.director || "")}</td>` +
-        `<td class="c-com">${e.date ? "Approved " + fmtDate(e.date) : ""}</td></tr></tbody></table>`);
-      out.push(`<div class="p-early"><div class="pe-t">Comments for early release</div>` +
-        `<div class="pe-b">${esc(e.comments || "")}</div></div>`);
+      out.push(`<tr><td>4.13</td><td><b>Approval for early release</b></td>` +
+        `<td colspan="2" class="pt-dir">Director Signature&nbsp;&nbsp;` +
+        `${esc(e.director || "")}${e.date ? " — " + fmtDate(e.date) : ""}</td></tr>`);
+      out.push(`<tr><td colspan="4" class="pt-sec">Comments for early release</td></tr>`);
+      out.push(`<tr><td colspan="4" class="pe-box">${esc(e.comments || "")}</td></tr>`);
+      const foot = p.sections[0].foot;
+      if(foot) out.push(`<tr><td colspan="4" class="pt-foot">${esc(foot)}</td></tr>`);
     }
 
     const so = state.signoffs[p.part];
-    out.push(`<div class="p-sign">` +
+    out.push(`<tr><td colspan="4" class="pt-sign"><div class="s-in">` +
       `<span><b>Signed :</b> <span class="sig">${so ? esc(so.name) : "&nbsp;"}</span></span>` +
-      `<span><b>Date :</b> <span class="sig">${so ? fmtDate(so.date) : "&nbsp;"}</span></span></div>`);
-    out.push(`<div class="pp-pagefoot"><span>Part ${p.part} of 4 — ${esc(p.title)}</span>` +
-      `<span>Document No ${DOC_REF}</span></div>`);
-    out.push(`</section>`);
+      `<span><b>Date :</b> <span class="sig">${so ? fmtDate(so.date) : "&nbsp;"}</span></span>` +
+      `</div></td></tr>`);
+    out.push(`</tbody></table></section>`);
   }
   $("#printDoc").innerHTML = out.join("");
 }
