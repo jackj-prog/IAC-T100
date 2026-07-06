@@ -2,43 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#d5001f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="T100">
 <title>IACT100 Digital Checklist</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="data:image/png;base64,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">
 </head>
 <body>
 <style>
   :root{
-    --paper:#f5f4f0; --panel:#ffffff; --panel-2:#fbfaf8;
-    --ink:#1c1e21; --muted:#6b6f75; --line:#dcdad3; --line-strong:#b9b6ac;
-    --red:#d5001f; --red-ink:#b30019; --red-soft:#fdeef0;
-    --green:#177a43; --green-soft:#e4f3ea;
-    --na:#5c6167; --na-soft:#ecedec;
-    --focus:#1a6fd4;
-    --shadow:0 1px 3px rgba(28,30,33,.07);
-  }
-  @media (prefers-color-scheme: dark){
-    :root{
-      --paper:#141619; --panel:#1e2126; --panel-2:#23262b;
-      --ink:#e9e8e4; --muted:#9aa0a6; --line:#33373d; --line-strong:#4a4f57;
-      --red:#ff5468; --red-ink:#ff7080; --red-soft:#3a2226;
-      --green:#3fbf77; --green-soft:#1d3226;
-      --na:#a6abb1; --na-soft:#2b2e33;
-      --focus:#6aa9ff;
-      --shadow:0 1px 3px rgba(0,0,0,.4);
-    }
-  }
-  :root[data-theme="dark"]{
-    --paper:#141619; --panel:#1e2126; --panel-2:#23262b;
-    --ink:#e9e8e4; --muted:#9aa0a6; --line:#33373d; --line-strong:#4a4f57;
-    --red:#ff5468; --red-ink:#ff7080; --red-soft:#3a2226;
-    --green:#3fbf77; --green-soft:#1d3226;
-    --na:#a6abb1; --na-soft:#2b2e33;
-    --focus:#6aa9ff;
-    --shadow:0 1px 3px rgba(0,0,0,.4);
-  }
-  :root[data-theme="light"]{
     --paper:#f5f4f0; --panel:#ffffff; --panel-2:#fbfaf8;
     --ink:#1c1e21; --muted:#6b6f75; --line:#dcdad3; --line-strong:#b9b6ac;
     --red:#d5001f; --red-ink:#b30019; --red-soft:#fdeef0;
@@ -108,7 +86,7 @@
     letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
   .meta input{
     border:1px solid var(--line-strong);border-radius:6px;background:var(--panel-2);
-    padding:8px 10px;font-size:14.5px;
+    padding:8px 10px;font-size:14.5px;width:100%;min-width:0;
   }
   .meta .w2{grid-column:span 2}
   @media (max-width:760px){ .meta{grid-template-columns:repeat(2,1fr)} .meta .w2{grid-column:span 2} }
@@ -226,26 +204,62 @@
   @media (prefers-reduced-motion: no-preference){ #toast{transition:opacity .2s,transform .2s} }
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  /* ---------- print ---------- */
+  /* ---------- small screens / phone ---------- */
+  @media (max-width:640px){
+    .topbar{position:static;padding:8px 12px 9px;gap:8px}
+    .tabs{top:0}
+    .brand{gap:10px}
+    .brand-logo{height:28px}
+    .brand h1{font-size:14.5px}
+    .brand .docref{font-size:9px;letter-spacing:.05em}
+    .progress-wrap{order:3;width:100%;min-width:0}
+    #savedTick{margin-left:auto}
+    .btn{padding:8px 10px;font-size:12.5px;gap:5px}
+    .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{flex:0 0 auto;min-width:150px}
+    main{padding:12px 10px 60px}
+    .meta{padding:12px 12px 14px;gap:10px}
+    .sbtn{width:56px;padding:11px 0}
+    .signoff{gap:9px}
+    .signoff .so-out{margin-left:0;width:100%}
+  }
+
+  /* ---------- print: regenerated paper form (QAP07_04_17 layout) ---------- */
+  #printDoc{display:none}
   @media print{
-    :root{--paper:#fff;--panel:#fff;--panel-2:#fff;--ink:#000;--muted:#444;
-      --line:#999;--line-strong:#666;--shadow:none}
-    .top-actions,.tabs,.bulk,#snagChip,#savedTick,.unlink{display:none !important}
-    .topbar{position:static;border-bottom:2px solid #000}
-    .part{display:block !important}
-    .part-title{page-break-before:always}
-    .part:first-of-type .part-title{page-break-before:auto}
-    .row,.signoff{page-break-inside:avoid}
-    .meta{grid-template-columns:repeat(3,1fr)}
-    .meta .w2{grid-column:span 1}
-    .meta input{width:100%;min-width:0}
-    .card{box-shadow:none}
-    .sbtn{display:none}
-    .seg{border:none}
-    .stamp.ok::before{content:"✓ Checked · "}
-    .stamp.na::before{content:"N/A · "}
-    .stamp.snag::before{content:"SNAG · "}
-    body{font-size:12px}
+    @page{size:A4;margin:12mm 12mm 14mm}
+    .topbar,main,footer,#toast{display:none !important}
+    body{background:#fff}
+    #printDoc{display:block;color:#000;font:11pt/1.32 "Times New Roman",Times,serif}
+    #printDoc .pp{page-break-after:always}
+    #printDoc .pp:last-child{page-break-after:auto}
+    #printDoc .pp-co{display:flex;align-items:center;gap:14px;margin:0 0 10px}
+    #printDoc .pp-co img{height:11mm;width:auto}
+    #printDoc .pp-co span{font:700 15pt/1.05 Arial,Helvetica,sans-serif}
+    #printDoc table{width:100%;border-collapse:collapse}
+    #printDoc .t-title td{border:1.5pt solid #000;text-align:center;font-weight:700;padding:4pt 6pt}
+    #printDoc .t-title .tt1{font-size:13pt}
+    #printDoc .t-title .tt2{font-size:11.5pt}
+    #printDoc .t-meta td{border:1.5pt solid #000;font-size:10pt;padding:3pt 6pt;font-weight:700}
+    #printDoc h3{font:700 11pt "Times New Roman",Times,serif;text-align:center;margin:10pt 0 4pt}
+    #printDoc .pp-banner{font-weight:700;text-align:center;margin:9pt 0 4pt;font-size:10.5pt}
+    #printDoc .t-items th{border:1pt solid #000;font-size:10pt;padding:2.5pt 4pt;font-weight:700}
+    #printDoc .t-items td{border:1pt solid #000;font-size:9.5pt;padding:2.5pt 4pt;vertical-align:top}
+    #printDoc .t-items .c-no{width:11mm;text-align:center}
+    #printDoc .t-items .c-by{width:20mm;text-align:center}
+    #printDoc .t-items .c-com{width:44mm}
+    #printDoc .t-items tr{page-break-inside:avoid}
+    #printDoc .t-items thead{display:table-header-group}
+    #printDoc .p-note{font-style:italic}
+    #printDoc .p-snag{font-weight:700}
+    #printDoc .p-foot{font-size:9.5pt;font-style:italic;text-align:center;margin:6pt 0}
+    #printDoc .p-sign{display:flex;gap:26pt;margin:16pt 0 4pt;font-size:11pt}
+    #printDoc .p-sign .sig{display:inline-block;min-width:52mm;border-bottom:1pt solid #000;padding:0 4pt 1pt}
+    #printDoc .p-early{border:1pt solid #000;margin-top:8pt}
+    #printDoc .p-early .pe-t{border-bottom:1pt solid #000;font-weight:700;text-align:center;padding:2.5pt;font-size:10pt}
+    #printDoc .p-early .pe-b{min-height:20mm;padding:3pt 5pt;font-size:9.5pt;white-space:pre-wrap}
+    #printDoc .pp-pagefoot{display:flex;justify-content:space-between;margin-top:12pt;font-size:8.5pt;color:#222}
   }
 </style>
 
@@ -270,10 +284,8 @@
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.8 4.2c0-.7.5-1.2 1.2-1.2h3l1.4 1.6h5.6c.7 0 1.2.5 1.2 1.2v6c0 .7-.5 1.2-1.2 1.2H3c-.7 0-1.2-.5-1.2-1.2z"/></svg>Open</button>
     <button class="btn" id="btnBackup" title="Save this checklist as a .json backup file">
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.8 6.8 8 10l3.2-3.2M2.5 13.2h11"/></svg>Backup</button>
-    <button class="btn" id="btnPrint" title="Print or save as PDF">
-      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.2 6V2.8h7.6V6M4.2 11.4H2.4V6h11.2v5.4h-1.8M4.2 9.4h7.6v3.8H4.2z"/></svg>Print</button>
-    <button class="btn primary" id="btnExport" title="Export the test record as an Excel workbook">
-      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.4 2.4h11.2v11.2H2.4zM2.4 6h11.2M2.4 9.7h11.2M6.1 6v7.6"/></svg>Export Excel</button>
+    <button class="btn primary" id="btnPrint" title="Print the completed T100 form, or save it as a PDF">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.2 6V2.8h7.6V6M4.2 11.4H2.4V6h11.2v5.4h-1.8M4.2 9.4h7.6v3.8H4.2z"/></svg>Print / PDF</button>
     <input type="file" id="fileLoad" accept=".json,application/json" hidden>
   </div>
 </header>
@@ -306,13 +318,14 @@
 </main>
 
 <footer>
-  <p>Entries are saved automatically in this browser only — use <strong>Backup</strong> to file the raw
-  record and <strong>Export Excel</strong> for the test record workbook.</p>
+  <p>Entries are saved automatically on this device only — use <strong>Print / PDF</strong> to file the
+  completed T100 form and <strong>Backup</strong> to keep or transfer the raw record.</p>
   <p class="foot-co">Industrial Automation &amp; Control Limited · Digital transcription of form
   QAP07_04_17 (IACT100 Checklist)</p>
 </footer>
 
 <div id="toast" role="status" aria-live="polite"></div>
+<div id="printDoc" aria-hidden="true"></div>
 
 <script>
 "use strict";
@@ -323,12 +336,11 @@
    controlled document changes, and update DOC_REF accordingly.
    ================================================================ */
 
-/*XLSX-BEGIN*/
 const DOC_REF = "QAP07_04_17";
 
 const CHECKLIST = [
   { part:1, title:"Pre-Test / Inspection", short:"Pre-Test / Inspection", sections:[
-    { rows:[
+    { st:"Test file & documents", rows:[
         { k:"1.1",  n:"1.1", t:"Ensure the test file is available (from the project engineer) including up to date set of documents applicable to the contract, these may include :-" },
         { k:"1.1a", n:"",    t:"Technical Specification(s)." },
         { k:"1.1b", n:"",    t:"Bill of Material Lists." },
@@ -491,8 +503,6 @@ const CHECKLIST = [
   ]}
 ];
 
-const STATUS_TEXT = { ok:"Checked", na:"N/A", snag:"SNAG" };
-
 function fmtDate(iso){
   if(!iso) return "";
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
@@ -502,313 +512,10 @@ function todayISO(){
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
-function flatRows(){
-  const out = [];
-  for(const p of CHECKLIST)
-    for(const s of p.sections)
-      for(const r of s.rows)
-        if(!r.note) out.push({ ...r, part:p.part, section:s.title || "" });
-  return out;
-}
-
-/* ---------- minimal XLSX writer (stored ZIP, inline strings) ---------- */
-function xmlEsc(s){
-  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;").replace(/'/g,"&apos;");
-}
-const CRC_TABLE = (() => {
-  const t = new Uint32Array(256);
-  for(let n=0;n<256;n++){
-    let c = n;
-    for(let k=0;k<8;k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
-    t[n] = c >>> 0;
-  }
-  return t;
-})();
-function crc32(bytes){
-  let c = 0xFFFFFFFF;
-  for(let i=0;i<bytes.length;i++) c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
-  return (c ^ 0xFFFFFFFF) >>> 0;
-}
-function zipStore(files){
-  // files: [{name, text}] -> Uint8Array of a stored (uncompressed) ZIP
-  const enc = new TextEncoder();
-  const parts = [], central = [];
-  let offset = 0;
-  const now = new Date();
-  const dosTime = ((now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1)) & 0xFFFF;
-  const dosDate = (((now.getFullYear()-1980) << 9) | ((now.getMonth()+1) << 5) | now.getDate()) & 0xFFFF;
-  const u16 = v => new Uint8Array([v & 255, (v >> 8) & 255]);
-  const u32 = v => new Uint8Array([v & 255, (v >> 8) & 255, (v >> 16) & 255, (v >>> 24) & 255]);
-  for(const f of files){
-    const name = enc.encode(f.name);
-    const data = enc.encode(f.text);
-    const crc = crc32(data);
-    const head = [u32(0x04034b50), u16(20), u16(0), u16(0), u16(dosTime), u16(dosDate),
-      u32(crc), u32(data.length), u32(data.length), u16(name.length), u16(0)];
-    const local = concatBytes([...head, name, data]);
-    central.push(concatBytes([u32(0x02014b50), u16(20), u16(20), u16(0), u16(0),
-      u16(dosTime), u16(dosDate), u32(crc), u32(data.length), u32(data.length),
-      u16(name.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(offset), name]));
-    parts.push(local);
-    offset += local.length;
-  }
-  const centralBytes = concatBytes(central);
-  const eocd = concatBytes([u32(0x06054b50), u16(0), u16(0), u16(files.length), u16(files.length),
-    u32(centralBytes.length), u32(offset), u16(0)]);
-  return concatBytes([...parts, centralBytes, eocd]);
-}
-function concatBytes(arrays){
-  let len = 0;
-  for(const a of arrays) len += a.length;
-  const out = new Uint8Array(len);
-  let o = 0;
-  for(const a of arrays){ out.set(a, o); o += a.length; }
-  return out;
-}
-function colName(i){ // 0 -> A
-  let s = "";
-  i += 1;
-  while(i > 0){ const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = (i - m - 1) / 26; }
-  return s;
-}
-function sheetBuilder(colWidths){
-  const rows = [], merges = [];
-  let r = 0;
-  const api = {
-    row(cells, opts = {}){
-      r += 1;
-      rows.push({ r, cells, ht: opts.ht });
-      if(opts.spanFrom !== undefined && opts.spanTo !== undefined && opts.spanTo > opts.spanFrom)
-        merges.push(`${colName(opts.spanFrom)}${r}:${colName(opts.spanTo)}${r}`);
-      return r;
-    },
-    band(text, style){ // full-width merged row
-      api.row([{ v:text, s:style }], { spanFrom:0, spanTo:colWidths.length - 1 });
-    },
-    blank(){ api.row([]); },
-    merge(rowIdx, from, to){ merges.push(`${colName(from)}${rowIdx}:${colName(to)}${rowIdx}`); },
-    xml(){
-      const cols = colWidths.map((w,i) =>
-        `<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join("");
-      const body = rows.map(row => {
-        const ht = row.ht ? ` ht="${row.ht}" customHeight="1"` : "";
-        const cells = row.cells.map((c,i) => {
-          if(c === null || c === undefined) return "";
-          const ref = `${colName(i)}${row.r}`;
-          const s = c.s ? ` s="${c.s}"` : "";
-          if(c.v === null || c.v === undefined || c.v === "") return `<c r="${ref}"${s}/>`;
-          if(c.num) return `<c r="${ref}"${s}><v>${c.v}</v></c>`;
-          return `<c r="${ref}"${s} t="inlineStr"><is><t xml:space="preserve">${xmlEsc(c.v)}</t></is></c>`;
-        }).join("");
-        return `<row r="${row.r}"${ht}>${cells}</row>`;
-      }).join("");
-      const mergeXml = merges.length
-        ? `<mergeCells count="${merges.length}">${merges.map(m => `<mergeCell ref="${m}"/>`).join("")}</mergeCells>`
-        : "";
-      return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>` +
-        `<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">` +
-        `<cols>${cols}</cols><sheetData>${body}</sheetData>${mergeXml}</worksheet>`;
-    }
-  };
-  return api;
-}
-
-const STYLES_XML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-<fonts count="5">
-<font><sz val="11"/><name val="Calibri"/></font>
-<font><b/><sz val="11"/><name val="Calibri"/></font>
-<font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font>
-<font><b/><sz val="14"/><name val="Calibri"/></font>
-<font><i/><sz val="10"/><color rgb="FF6B6F75"/><name val="Calibri"/></font>
-</fonts>
-<fills count="7">
-<fill><patternFill patternType="none"/></fill>
-<fill><patternFill patternType="gray125"/></fill>
-<fill><patternFill patternType="solid"><fgColor rgb="FF2A2E33"/><bgColor indexed="64"/></patternFill></fill>
-<fill><patternFill patternType="solid"><fgColor rgb="FFDCEFE3"/><bgColor indexed="64"/></patternFill></fill>
-<fill><patternFill patternType="solid"><fgColor rgb="FFF8DEDE"/><bgColor indexed="64"/></patternFill></fill>
-<fill><patternFill patternType="solid"><fgColor rgb="FFEBEBE9"/><bgColor indexed="64"/></patternFill></fill>
-<fill><patternFill patternType="solid"><fgColor rgb="FFF0EEE8"/><bgColor indexed="64"/></patternFill></fill>
-</fills>
-<borders count="2">
-<border><left/><right/><top/><bottom/><diagonal/></border>
-<border><left style="thin"><color rgb="FFC8C6C0"/></left><right style="thin"><color rgb="FFC8C6C0"/></right><top style="thin"><color rgb="FFC8C6C0"/></top><bottom style="thin"><color rgb="FFC8C6C0"/></bottom><diagonal/></border>
-</borders>
-<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
-<cellXfs count="12">
-<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
-<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>
-<xf numFmtId="0" fontId="3" fillId="0" borderId="0" xfId="0" applyFont="1"/>
-<xf numFmtId="0" fontId="2" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf>
-<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment wrapText="1" vertical="top"/></xf>
-<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="top"/></xf>
-<xf numFmtId="0" fontId="0" fillId="3" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="top"/></xf>
-<xf numFmtId="0" fontId="0" fillId="5" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="top"/></xf>
-<xf numFmtId="0" fontId="1" fillId="4" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="top"/></xf>
-<xf numFmtId="0" fontId="1" fillId="6" borderId="0" xfId="0" applyFont="1" applyFill="1"/>
-<xf numFmtId="0" fontId="4" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment wrapText="1"/></xf>
-<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="top" wrapText="1"/></xf>
-</cellXfs>
-<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>
-</styleSheet>`;
-
-function statusStyle(status){
-  return status === "ok" ? 6 : status === "na" ? 7 : status === "snag" ? 8 : 5;
-}
-function estHt(text, comment){
-  const lines = Math.max(1, Math.ceil((text || "").length / 66), Math.ceil((comment || "").length / 36));
-  return lines > 1 ? Math.min(150, 14.5 * lines + 3) : undefined;
-}
-
-function buildXlsx(state){
-  const meta = state.meta;
-  const S1 = sheetBuilder([16, 60, 11, 13, 11, 42]);
-  S1.band("IACT100 Checklist — Test Record", 2);
-  S1.band(`Industrial Automation & Control Limited · Document No ${DOC_REF}`, 10);
-  S1.blank();
-  const metaPairs = [
-    ["Customer:", meta.customer], ["Contract No.:", meta.contract],
-    ["Items covered:", meta.items], ["Date:", fmtDate(meta.date)],
-    ["Tester:", meta.tester + (meta.initials ? ` (${meta.initials})` : "")],
-    ["Exported:", `${fmtDate(todayISO())} ${new Date().toTimeString().slice(0,5)}`]
-  ];
-  for(const [k,v] of metaPairs){
-    const r = S1.row([{ v:k, s:1 }, { v:v || "", s:0 }]);
-    S1.merge(r, 1, 5);
-  }
-  S1.blank();
-
-  for(const p of CHECKLIST){
-    S1.band(`PART ${p.part} — ${p.title.toUpperCase()}`, 9);
-    for(const sec of p.sections){
-      if(sec.banner) S1.band(sec.banner, 1);
-      if(sec.title) S1.band(sec.title, 9);
-      S1.row([
-        { v:"Item", s:3 }, { v:"Description", s:3 }, { v:"Status", s:3 },
-        { v:"Checked By", s:3 }, { v:"Date", s:3 }, { v:"Comments", s:3 }
-      ]);
-      for(const row of sec.rows){
-        if(row.note){ S1.band(row.note, 10); continue; }
-        const rs = state.rows[row.k] || {};
-        const text = row.editable ? (rs.text || "") : (row.lead ? `${row.lead} ${row.t}` : row.t);
-        if(row.optional && !text && !rs.status && !rs.comment) continue;
-        S1.row([
-          { v:row.n, s:11 },
-          { v:text, s:4 },
-          { v:rs.status ? STATUS_TEXT[rs.status] : "", s:statusStyle(rs.status) },
-          { v:rs.by || "", s:11 },
-          { v:rs.date ? fmtDate(rs.date) : "", s:11 },
-          { v:rs.comment || "", s:4 }
-        ], { ht: estHt(text, rs.comment) });
-      }
-      if(sec.notes) for(const n of sec.notes) S1.band(`Note: ${n}`, 10);
-      if(sec.foot) S1.band(sec.foot, 10);
-    }
-    if(p.part === 4){
-      const e = state.early || {};
-      S1.row([
-        { v:"4.13", s:11 },
-        { v:"Approval for early release", s:4 },
-        { v:e.date ? "Approved" : "", s:e.date ? 6 : 5 },
-        { v:e.director || "", s:11 },
-        { v:e.date ? fmtDate(e.date) : "", s:11 },
-        { v:e.comments || "", s:4 }
-      ], { ht: estHt("", e.comments) });
-    }
-    const so = state.signoffs[p.part];
-    S1.band(so ? `Signed: ${so.name}    Date: ${fmtDate(so.date)}` : "Signed: —    Date: —", 1);
-    S1.blank();
-  }
-
-  const S2 = sheetBuilder([40, 10, 10, 10, 10, 13, 20, 12]);
-  S2.band("IACT100 — Summary", 2);
-  S2.band(`${meta.customer || "—"} · Contract ${meta.contract || "—"} · Items ${meta.items || "—"} · ${fmtDate(meta.date)}`, 10);
-  S2.blank();
-  S2.row([
-    { v:"Part", s:3 }, { v:"Total", s:3 }, { v:"Checked", s:3 }, { v:"N/A", s:3 },
-    { v:"Snags", s:3 }, { v:"Outstanding", s:3 }, { v:"Signed by", s:3 }, { v:"Date", s:3 }
-  ]);
-  const snags = [];
-  for(const p of CHECKLIST){
-    let total = 0, ok = 0, na = 0, snag = 0;
-    for(const sec of p.sections)
-      for(const row of sec.rows){
-        if(row.note) continue;
-        const rs = state.rows[row.k] || {};
-        if(row.optional && !(rs.text || "").trim() && !rs.status) continue;
-        total++;
-        if(rs.status === "ok") ok++;
-        else if(rs.status === "na") na++;
-        else if(rs.status === "snag"){
-          snag++;
-          snags.push({ n:row.n, t:row.editable ? (rs.text || "") : (row.lead ? `${row.lead} ${row.t}` : row.t), c:rs.comment || "" });
-        }
-      }
-    const so = state.signoffs[p.part];
-    S2.row([
-      { v:`${p.part} — ${p.title}`, s:5 },
-      { v:total, s:5, num:true }, { v:ok, s:6, num:true }, { v:na, s:7, num:true },
-      { v:snag, s:snag ? 8 : 5, num:true }, { v:total - ok - na - snag, s:5, num:true },
-      { v:so ? so.name : "", s:5 }, { v:so ? fmtDate(so.date) : "", s:5 }
-    ]);
-  }
-  S2.blank();
-  S2.band("Snags / non-conformances", 9);
-  if(snags.length){
-    const hr = S2.row([{ v:"Item", s:3 }, { v:"Description", s:3 }, null, null, null, { v:"Comment", s:3 }]);
-    S2.merge(hr, 1, 4); S2.merge(hr, 5, 7);
-    for(const s of snags){
-      const r = S2.row([{ v:s.n, s:11 }, { v:s.t, s:4 }, null, null, null, { v:s.c, s:4 }],
-        { ht: estHt(s.t, s.c) });
-      S2.merge(r, 1, 4); S2.merge(r, 5, 7);
-    }
-  } else {
-    S2.band("No snags recorded.", 10);
-  }
-
-  const files = [
-    { name:"[Content_Types].xml", text:
-      `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>` +
-      `<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">` +
-      `<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>` +
-      `<Default Extension="xml" ContentType="application/xml"/>` +
-      `<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>` +
-      `<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>` +
-      `<Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>` +
-      `<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>` +
-      `</Types>` },
-    { name:"_rels/.rels", text:
-      `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>` +
-      `<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">` +
-      `<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>` +
-      `</Relationships>` },
-    { name:"xl/workbook.xml", text:
-      `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>` +
-      `<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">` +
-      `<sheets><sheet name="Test Record" sheetId="1" r:id="rId1"/><sheet name="Summary" sheetId="2" r:id="rId2"/></sheets>` +
-      `</workbook>` },
-    { name:"xl/_rels/workbook.xml.rels", text:
-      `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>` +
-      `<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">` +
-      `<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>` +
-      `<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/>` +
-      `<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>` +
-      `</Relationships>` },
-    { name:"xl/styles.xml", text: STYLES_XML },
-    { name:"xl/worksheets/sheet1.xml", text: S1.xml() },
-    { name:"xl/worksheets/sheet2.xml", text: S2.xml() }
-  ];
-  return zipStore(files);
-}
-
 function exportFileName(state, ext){
   const c = (state.meta.contract || "draft").replace(/[^\w\-]+/g, "_");
   return `IACT100_${c}_${state.meta.date || todayISO()}.${ext}`;
 }
-/*XLSX-END*/
-
 /* ================================================================
    App state + UI
    ================================================================ */
@@ -992,17 +699,10 @@ function buildParts(){
 
     for(const sec of p.sections){
       const card = el("div", "section card");
-      if(sec.title || sec.banner){
-        const head = el("div", "sec-head" + (sec.banner ? " banner" : ""));
-        head.appendChild(el("h3", "", sec.title || sec.banner));
-        head.appendChild(makeBulkBtn(sec));
-        card.appendChild(head);
-      }else{
-        const head = el("div", "sec-head");
-        head.appendChild(el("h3", "", "Test file & documents"));
-        head.appendChild(makeBulkBtn(sec));
-        card.appendChild(head);
-      }
+      const head = el("div", "sec-head" + (sec.banner ? " banner" : ""));
+      head.appendChild(el("h3", "", sec.title || sec.banner || sec.st || p.short));
+      head.appendChild(makeBulkBtn(sec));
+      card.appendChild(head);
       for(const row of sec.rows) card.appendChild(buildRow(sec, row, p));
       if(sec.notes) for(const n of sec.notes) card.appendChild(el("div", "note-row", "Note: " + n));
       if(sec.foot) card.appendChild(el("div", "foot-note", sec.foot));
@@ -1259,17 +959,6 @@ function download(bytes, filename, mime){
 }
 
 function bindToolbar(){
-  $("#btnExport").addEventListener("click", () => {
-    try{
-      const bytes = buildXlsx(state);
-      download(bytes, exportFileName(state, "xlsx"),
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-      toast("Excel test record exported.");
-    }catch(err){
-      console.error(err);
-      toast("Export failed — see browser console.");
-    }
-  });
   $("#btnBackup").addEventListener("click", () => {
     download(JSON.stringify(state, null, 1), exportFileName(state, "json"), "application/json");
     toast("Backup saved — keep it with the job file.");
@@ -1293,19 +982,106 @@ function bindToolbar(){
     rd.readAsText(f);
     ev.target.value = "";
   });
-  $("#btnPrint").addEventListener("click", () => window.print());
+  $("#btnPrint").addEventListener("click", () => { buildPrintDoc(); window.print(); });
   $("#btnNew").addEventListener("click", () => {
-    if(!confirm("Start a new blank checklist? The current one is cleared from this browser — export or back it up first if you need it.")) return;
+    if(!confirm("Start a new blank checklist? The current one is cleared from this device — print or back it up first if you need it.")) return;
     state = freshState();
     localStorage.setItem(LS_KEY, JSON.stringify(state));
     location.reload();
   });
 }
 
+/* ================================================================
+   Print document: regenerates the T100 as a paper-faithful form
+   (Times New Roman, boxed tables) from the current state. Printing
+   a blank checklist yields a blank form usable as a paper fallback.
+   ================================================================ */
+function esc(s){
+  return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function printCommentCell(rs){
+  const c = rs.comment || "";
+  if(rs.status === "na") return "N/A" + (c ? " — " + esc(c) : "");
+  if(rs.status === "snag") return `<span class="p-snag">SNAG${c ? ":" : ""}</span> ` + esc(c);
+  return esc(c);
+}
+function buildPrintDoc(){
+  const meta = state.meta;
+  const logoSrc = document.querySelector(".brand-logo").src;
+  const out = [];
+  for(const p of CHECKLIST){
+    out.push(`<section class="pp">`);
+    out.push(`<div class="pp-co"><img src="${logoSrc}" alt="">` +
+      `<span>Industrial Automation &amp; Control Limited</span></div>`);
+    out.push(`<table class="t-title"><tbody>` +
+      `<tr><td class="tt1">IACT100 Checklist</td></tr>` +
+      `<tr><td class="tt2">${esc(p.title)}</td></tr></tbody></table>`);
+    out.push(`<table class="t-meta"><tbody><tr>` +
+      `<td style="width:34%">Customer: ${esc(meta.customer)}</td>` +
+      `<td>Contract No. ${esc(meta.contract)}${meta.items ? " — Items: " + esc(meta.items) : ""}</td>` +
+      `<td style="width:22%">Date: ${fmtDate(meta.date)}</td>` +
+      `</tr></tbody></table>`);
+
+    for(const sec of p.sections){
+      if(sec.title) out.push(`<h3>${esc(sec.title)}</h3>`);
+      if(sec.banner) out.push(`<div class="pp-banner">${esc(sec.banner)}</div>`);
+      out.push(`<table class="t-items"><thead><tr>` +
+        `<th class="c-no"></th><th>Item</th><th class="c-by">Checked By</th>` +
+        `<th class="c-com">Comments</th></tr></thead><tbody>`);
+      for(const row of sec.rows){
+        if(row.note){
+          out.push(`<tr><td class="c-no"></td>` +
+            `<td class="p-note" colspan="3">${esc(row.note)}</td></tr>`);
+          continue;
+        }
+        const rs = state.rows[row.k] || {};
+        const text = row.editable
+          ? esc(rs.text || "")
+          : (row.lead ? `<b>${esc(row.lead)}</b> ${esc(row.t)}` : esc(row.t));
+        out.push(`<tr><td class="c-no">${esc(row.n)}</td>` +
+          `<td>${text || "&nbsp;"}</td>` +
+          `<td class="c-by">${esc(rs.by || "")}</td>` +
+          `<td class="c-com">${printCommentCell(rs)}</td></tr>`);
+      }
+      if(sec.notes)
+        for(const n of sec.notes)
+          out.push(`<tr><td class="c-no"><b>Note</b></td>` +
+            `<td class="p-note" colspan="3">${esc(n)}</td></tr>`);
+      out.push(`</tbody></table>`);
+      if(sec.foot) out.push(`<div class="p-foot">${esc(sec.foot)}</div>`);
+    }
+
+    if(p.part === 4){
+      const e = state.early || {};
+      out.push(`<table class="t-items"><tbody><tr>` +
+        `<td class="c-no">4.13</td><td><b>Approval for early release</b> — Director signature</td>` +
+        `<td class="c-by">${esc(e.director || "")}</td>` +
+        `<td class="c-com">${e.date ? "Approved " + fmtDate(e.date) : ""}</td></tr></tbody></table>`);
+      out.push(`<div class="p-early"><div class="pe-t">Comments for early release</div>` +
+        `<div class="pe-b">${esc(e.comments || "")}</div></div>`);
+    }
+
+    const so = state.signoffs[p.part];
+    out.push(`<div class="p-sign">` +
+      `<span><b>Signed :</b> <span class="sig">${so ? esc(so.name) : "&nbsp;"}</span></span>` +
+      `<span><b>Date :</b> <span class="sig">${so ? fmtDate(so.date) : "&nbsp;"}</span></span></div>`);
+    out.push(`<div class="pp-pagefoot"><span>Part ${p.part} of 4 — ${esc(p.title)}</span>` +
+      `<span>Document No ${DOC_REF}</span></div>`);
+    out.push(`</section>`);
+  }
+  $("#printDoc").innerHTML = out.join("");
+}
+window.addEventListener("beforeprint", buildPrintDoc);
+
 bindMeta();
 buildParts();
 bindToolbar();
 refresh();
+
+if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
 
 const topbarEl = document.querySelector(".topbar");
 const setTabsTop = () =>
