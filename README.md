@@ -43,10 +43,30 @@ static files.
    file. Printing an empty checklist produces a blank form, so it also
    replaces the paper master.
 
-**Backup / Open** save and load the raw record as a `.json` file — for
-archiving with the job or moving a half-finished checklist between devices.
-Progress autosaves on the device (localStorage); it does not sync between
-devices on its own.
+**Jobs** lists every checklist saved on the device — resume, start new, or
+delete. Each checklist has its own slot, so several jobs (or several
+engineers sharing a bench PC) never overwrite each other.
+
+## Shared-drive deployment
+
+The HTML file on a shared drive is only the *app* — like a pad of blank
+forms. Entries are saved per device; two engineers opening the app from the
+drive on different PCs cannot see or disturb each other's work. Records move
+between people through **job files**:
+
+- **Backup** asks once where to save the job file (e.g. the contract folder
+  on the shared drive) — after that, every change also writes to that file
+  automatically ("Saved → file" in the toolbar).
+- **Open** loads a job file. If someone saved it within the last 15 minutes
+  you're warned who and when, in case they're still working on it. Once
+  open, your changes save back to the same file.
+- If someone else saves the file while you're editing, the app spots it
+  before overwriting and asks which version wins — declining keeps your
+  work safely on your own device.
+
+Direct save-to-drive needs Chrome or Edge (Firefox/Safari fall back to a
+normal download/upload). Suggested layout: one folder per contract holding
+the job `.json` files and the final printed PDFs.
 
 ## Maintenance
 

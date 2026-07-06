@@ -196,6 +196,27 @@
   footer .foot-co{font-size:11px;letter-spacing:.05em;text-transform:uppercase;opacity:.8}
   #savedTick{font-size:12px;color:var(--muted);white-space:nowrap}
 
+  /* ---------- jobs modal ---------- */
+  .modal{position:fixed;inset:0;z-index:80;background:rgba(20,22,25,.45);
+    display:flex;align-items:center;justify-content:center;padding:16px}
+  .modal[hidden]{display:none}
+  .modal-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 10px 40px rgba(0,0,0,.25);width:100%;max-width:620px;max-height:82vh;
+    overflow:auto;padding:16px 18px}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .modal-head h2{margin:0;font-size:16px;letter-spacing:.02em}
+  .modal-foot{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+  .modal-hint{font-size:12px;color:var(--muted)}
+  .job-row{display:flex;align-items:center;gap:12px;padding:11px 4px;border-top:1px solid var(--line)}
+  .job-row:first-child{border-top:0}
+  .job-main{flex:1;min-width:0}
+  .job-title{font-weight:700;font-size:14px}
+  .job-title .cur{color:var(--green);font-size:11.5px;font-weight:600;margin-left:8px;
+    text-transform:uppercase;letter-spacing:.06em}
+  .job-sub{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .job-sub .snags{color:var(--red-ink);font-weight:600}
+  .job-none{padding:18px 4px;color:var(--muted);font-size:13.5px}
+
   #toast{
     position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
     background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:8px;
@@ -292,8 +313,8 @@
     <span id="savedTick"></span>
   </div>
   <div class="top-actions">
-    <button class="btn" id="btnNew" title="Start a new blank checklist">
-      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.2v9.6M3.2 8h9.6"/></svg>New</button>
+    <button class="btn" id="btnJobs" title="Saved checklists on this device — resume, start new, or delete">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4.2h11M2.5 8h11M2.5 11.8h7"/></svg>Jobs</button>
     <button class="btn" id="btnLoad" title="Open a saved .json backup">
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.8 4.2c0-.7.5-1.2 1.2-1.2h3l1.4 1.6h5.6c.7 0 1.2.5 1.2 1.2v6c0 .7-.5 1.2-1.2 1.2H3c-.7 0-1.2-.5-1.2-1.2z"/></svg>Open</button>
     <button class="btn" id="btnBackup" title="Save this checklist as a .json backup file">
@@ -341,6 +362,21 @@
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="printDoc" aria-hidden="true"></div>
 
+<div id="jobsModal" class="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="jobsTitle">
+    <div class="modal-head">
+      <h2 id="jobsTitle">Checklists on this device</h2>
+      <button class="btn" id="btnJobsClose">Close</button>
+    </div>
+    <div id="jobsList"></div>
+    <div class="modal-foot">
+      <button class="btn primary" id="btnNewJob">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.2v9.6M3.2 8h9.6"/></svg>New checklist</button>
+      <span class="modal-hint">Each checklist is saved separately — starting a new one never clears another.</span>
+    </div>
+  </div>
+</div>
+
 <script>
 "use strict";
 /* ================================================================
@@ -351,7 +387,7 @@
    ================================================================ */
 
 const DOC_REF = "QAP07_04_17";
-const APP_BUILD = "build 7"; // bump with the sw.js CACHE version on every release
+const APP_BUILD = "build 8"; // bump with the sw.js CACHE version on every release
 
 const CHECKLIST = [
   { part:1, title:"Pre-Test / Inspection", short:"Pre-Test / Inspection", sections:[
@@ -535,8 +571,14 @@ function exportFileName(state, ext){
 /* ================================================================
    App state + UI
    ================================================================ */
-const LS_KEY = "iact100.v1";
+/* Storage: one slot per checklist so several jobs (and several engineers on
+   a shared bench PC) never overwrite each other. */
+const K_INDEX = "iact100.jobs";      // {id: summary} for the Jobs list
+const K_ACTIVE = "iact100.active";   // id of the open checklist
+const LEGACY_KEY = "iact100.v1";     // pre-Jobs single slot, migrated on boot
+const jobKey = id => "iact100.job." + id;
 const $ = sel => document.querySelector(sel);
+function newId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 function freshState(){
   return {
@@ -560,21 +602,68 @@ function normalizeState(s){
     early: Object.assign(f.early, (s.early && typeof s.early === "object") ? s.early : {})
   };
 }
-function loadState(){
+function readJob(id){
   try{
-    const raw = localStorage.getItem(LS_KEY);
+    const raw = localStorage.getItem(jobKey(id));
     return raw ? normalizeState(JSON.parse(raw)) : null;
   }catch(e){ return null; }
 }
-let state = loadState() || freshState();
+function readIndex(){
+  try{ return JSON.parse(localStorage.getItem(K_INDEX)) || {}; }
+  catch(e){ return {}; }
+}
+function summarize(s){
+  let total = 0, done = 0, snag = 0;
+  for(const p of CHECKLIST){
+    const c = partCountsFor(s, p);
+    total += c.total; done += c.done; snag += c.snag;
+  }
+  return { customer: s.meta.customer, contract: s.meta.contract, item: s.meta.items,
+    date: s.meta.date, updated: Date.now(), total, done, snag };
+}
+/* One-time migration of the old single-checklist slot into a job. */
+(function migrateLegacy(){
+  try{
+    const raw = localStorage.getItem(LEGACY_KEY);
+    if(raw){
+      const s = normalizeState(JSON.parse(raw));
+      if(s){
+        const id = newId();
+        localStorage.setItem(jobKey(id), JSON.stringify(s));
+        localStorage.setItem(K_ACTIVE, id);
+      }
+    }
+    localStorage.removeItem(LEGACY_KEY);
+  }catch(e){ try{ localStorage.removeItem(LEGACY_KEY); }catch(e2){} }
+})();
+
+let activeId = null;
+try{ activeId = localStorage.getItem(K_ACTIVE); }catch(e){}
+let state = (activeId && readJob(activeId)) || freshState();
+if(!activeId || !readJob(activeId)) activeId = newId();
+
+/* Optional link to a .json job file on the shared drive (File System Access
+   API, Chrome/Edge). While linked, every change also writes to that file. */
+let fileHandle = null;      // live handle, this session only
+let fileSavedAt = null;     // savedAt we last wrote/read, for conflict checks
+let fileTimer = null;
+const FS_OK = typeof window.showSaveFilePicker === "function";
+function currentBy(){
+  return (state.meta.initials || state.meta.tester || "").trim().toUpperCase();
+}
 
 let saveTimer = null;
 function writeStore(){
   try{
-    localStorage.setItem(LS_KEY, JSON.stringify(state));
+    localStorage.setItem(jobKey(activeId), JSON.stringify(state));
+    const idx = readIndex();
+    idx[activeId] = summarize(state);
+    localStorage.setItem(K_INDEX, JSON.stringify(idx));
+    localStorage.setItem(K_ACTIVE, activeId);
     const t = new Date();
     $("#savedTick").textContent =
-      `Saved ${String(t.getHours()).padStart(2,"0")}:${String(t.getMinutes()).padStart(2,"0")}`;
+      `Saved ${String(t.getHours()).padStart(2,"0")}:${String(t.getMinutes()).padStart(2,"0")}` +
+      (fileHandle ? " → file" : "");
   }catch(e){
     $("#savedTick").textContent = "Not saving!";
     if(!writeStore.warned){
@@ -586,7 +675,7 @@ function writeStore(){
 /* Same checklist open in another tab/window: last save wins, so warn. */
 let crossTabWarnedAt = 0;
 window.addEventListener("storage", ev => {
-  if(ev.key !== LS_KEY || ev.newValue === null) return;
+  if(ev.key !== jobKey(activeId) || ev.newValue === null) return;
   if(Date.now() - crossTabWarnedAt > 60000){
     crossTabWarnedAt = Date.now();
     toast("This checklist is also open in another tab or window — whichever saves last wins.");
@@ -595,9 +684,46 @@ window.addEventListener("storage", ev => {
 function save(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => { saveTimer = null; writeStore(); }, 250);
+  if(fileHandle){
+    clearTimeout(fileTimer);
+    fileTimer = setTimeout(() => { fileTimer = null; writeJobFile(); }, 1500);
+  }
+}
+async function writeJobFile(){
+  if(!fileHandle) return;
+  try{
+    if(fileSavedAt){
+      // someone else may have saved the shared file while we were editing
+      try{
+        const cur = JSON.parse(await (await fileHandle.getFile()).text());
+        if(cur && cur.savedAt && cur.savedAt !== fileSavedAt &&
+           (cur.savedBy || "") !== currentBy()){
+          const when = new Date(cur.savedAt);
+          const hm = `${String(when.getHours()).padStart(2,"0")}:${String(when.getMinutes()).padStart(2,"0")}`;
+          if(!confirm(`${fileHandle.name} was saved by ${cur.savedBy || "someone else"} at ${hm} while you were editing.\n\nOverwrite the file with your version?`)){
+            fileHandle = null;
+            toast("File link removed — your work is still saved on this device. Use Backup to re-link.");
+            writeStore();
+            return;
+          }
+        }
+      }catch(e){ /* unreadable or brand new file: just write */ }
+    }
+    const payload = Object.assign({}, state,
+      { savedBy: currentBy(), savedAt: new Date().toISOString() });
+    const w = await fileHandle.createWritable();
+    await w.write(JSON.stringify(payload, null, 1));
+    await w.close();
+    fileSavedAt = payload.savedAt;
+  }catch(e){
+    fileHandle = null;
+    toast("Couldn't write the job file (moved or drive offline) — still saving on this device.");
+    writeStore();
+  }
 }
 function flushSave(){
   if(saveTimer){ clearTimeout(saveTimer); saveTimer = null; writeStore(); }
+  if(fileTimer){ clearTimeout(fileTimer); fileTimer = null; writeJobFile(); }
 }
 window.addEventListener("pagehide", flushSave);
 document.addEventListener("visibilitychange", () => {
@@ -836,6 +962,8 @@ function buildEarlyRelease(){
 
   buildEarlyRelease._btn = btn;
   buildEarlyRelease._stamp = stamp;
+  buildEarlyRelease._dir = dirInp;
+  buildEarlyRelease._ta = ta;
   refreshEarly();
   return card;
 }
@@ -853,12 +981,12 @@ function refreshEarly(){
   }
 }
 
-function partCounts(p){
+function partCountsFor(s, p){
   let total = 0, done = 0, snag = 0;
   for(const sec of p.sections)
     for(const row of sec.rows){
       if(row.note) continue;
-      const rs = state.rows[row.k] || {};
+      const rs = s.rows[row.k] || {};
       if(row.optional && !(rs.text || "").trim() && !rs.status) continue;
       total++;
       if(rs.status) done++;
@@ -866,6 +994,7 @@ function partCounts(p){
     }
   return { total, done, snag };
 }
+function partCounts(p){ return partCountsFor(state, p); }
 
 function buildSignoff(p){
   const card = el("div", "signoff card");
@@ -1007,46 +1136,183 @@ function download(bytes, filename, mime){
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
 
+/* Swap the UI over to a different state object without reloading the page
+   (a reload would drop the shared-drive file handle). */
+function applyLoadedState(){
+  const map = { customer:"#m-customer", contract:"#m-contract", items:"#m-items",
+    date:"#m-date", tester:"#m-tester", initials:"#m-initials" };
+  for(const [key, sel] of Object.entries(map)) $(sel).value = state.meta[key] || "";
+  for(const key of Object.keys(rowEls)){
+    const rs = state.rows[key] || {};
+    const rowEl = rowEls[key].rowEl;
+    const com = rowEl.querySelector(".rcomment");
+    if(com) com.value = rs.comment || "";
+    const txt = rowEl.querySelector(".rtext-input");
+    if(txt) txt.value = rs.text || "";
+  }
+  for(const ui of Object.values(signoffEls)) ui.input.value = "";
+  if(buildEarlyRelease._dir) buildEarlyRelease._dir.value = state.early.director || "";
+  if(buildEarlyRelease._ta) buildEarlyRelease._ta.value = state.early.comments || "";
+  refresh();
+  refreshEarly();
+  activatePart(0);
+  window.scrollTo(0, 0);
+}
+
+function switchToState(s, id){
+  flushSave();                    // persist the outgoing checklist first
+  state = s;
+  activeId = id;
+  fileHandle = null;
+  fileSavedAt = null;
+  writeStore();
+  applyLoadedState();
+}
+
+function importJob(text, handle){
+  let raw = null, s = null;
+  try{ raw = JSON.parse(text); s = normalizeState(raw); }catch(e){}
+  if(!s){
+    toast("That file isn't an IACT100 backup.");
+    return;
+  }
+  if(raw.savedAt && raw.savedBy && raw.savedBy !== currentBy()){
+    const age = Date.now() - Date.parse(raw.savedAt);
+    if(age >= 0 && age < 15 * 60 * 1000){
+      const mins = Math.max(1, Math.round(age / 60000));
+      if(!confirm(`${raw.savedBy} saved this checklist ${mins} minute${mins === 1 ? "" : "s"} ago — they may still be working on it.\n\nOpen it anyway?`)) return;
+    }
+  }
+  switchToState(s, newId());
+  if(handle){
+    fileHandle = handle;
+    fileSavedAt = raw.savedAt || null;
+    writeStore();
+    toast(`Opened ${handle.name} — your changes will save back to it.`);
+  }else{
+    toast("Backup loaded.");
+  }
+}
+
+/* ---------- jobs modal ---------- */
+function fmtUpdated(ts){
+  const d = new Date(ts);
+  return `${fmtDate(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`)} ` +
+    `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+}
+function renderJobs(){
+  const host = $("#jobsList");
+  host.textContent = "";
+  const idx = readIndex();
+  const ids = Object.keys(idx).sort((a, b) => (idx[b].updated || 0) - (idx[a].updated || 0));
+  if(!ids.length){
+    host.appendChild(el("div", "job-none", "No saved checklists yet."));
+    return;
+  }
+  for(const id of ids){
+    const j = idx[id];
+    const row = el("div", "job-row");
+    const main = el("div", "job-main");
+    const title = el("div", "job-title",
+      `${j.contract || "No contract"}${j.item ? " · Item " + j.item : ""}${j.customer ? " — " + j.customer : ""}`);
+    if(id === activeId) title.appendChild(el("span", "cur", "current"));
+    main.appendChild(title);
+    const sub = el("div", "job-sub",
+      `${j.done || 0}/${j.total || 0} marked · updated ${fmtUpdated(j.updated || Date.now())} `);
+    if(j.snag) sub.appendChild(el("span", "snags", `· ${j.snag} snag${j.snag === 1 ? "" : "s"}`));
+    main.appendChild(sub);
+    row.appendChild(main);
+    if(id !== activeId){
+      const openBtn = el("button", "btn", "Resume");
+      openBtn.type = "button";
+      openBtn.addEventListener("click", () => {
+        const s = readJob(id);
+        if(!s){ toast("That checklist could not be read."); return; }
+        switchToState(s, id);
+        $("#jobsModal").hidden = true;
+      });
+      row.appendChild(openBtn);
+      const delBtn = el("button", "unlink", "delete");
+      delBtn.type = "button";
+      delBtn.addEventListener("click", () => {
+        if(!confirm(`Delete the checklist for ${j.contract || "this job"}${j.item ? " · Item " + j.item : ""}? This cannot be undone.`)) return;
+        try{
+          localStorage.removeItem(jobKey(id));
+          const cur = readIndex();
+          delete cur[id];
+          localStorage.setItem(K_INDEX, JSON.stringify(cur));
+        }catch(e){}
+        renderJobs();
+      });
+      row.appendChild(delBtn);
+    }
+    host.appendChild(row);
+  }
+}
+
 function bindToolbar(){
-  $("#btnBackup").addEventListener("click", () => {
-    download(JSON.stringify(state, null, 1), exportFileName(state, "json"), "application/json");
-    toast("Backup saved — keep it with the job file.");
+  $("#btnBackup").addEventListener("click", async () => {
+    if(FS_OK){
+      if(!fileHandle){
+        try{
+          fileHandle = await window.showSaveFilePicker({
+            suggestedName: exportFileName(state, "json"),
+            types: [{ description: "IACT100 checklist", accept: { "application/json": [".json"] } }]
+          });
+        }catch(e){ return; } // cancelled
+        fileSavedAt = null;
+        await writeJobFile();
+        writeStore();
+        if(fileHandle) toast(`Saving to ${fileHandle.name} — changes now save there automatically.`);
+      }else{
+        await writeJobFile();
+        if(fileHandle) toast(`Saved to ${fileHandle.name}.`);
+      }
+    }else{
+      download(JSON.stringify(Object.assign({}, state,
+        { savedBy: currentBy(), savedAt: new Date().toISOString() }), null, 1),
+        exportFileName(state, "json"), "application/json");
+      toast("Backup saved — keep it with the job file.");
+    }
   });
-  $("#btnLoad").addEventListener("click", () => $("#fileLoad").click());
+  $("#btnLoad").addEventListener("click", async () => {
+    if(FS_OK){
+      let handle;
+      try{
+        [handle] = await window.showOpenFilePicker({
+          types: [{ description: "IACT100 checklist", accept: { "application/json": [".json"] } }]
+        });
+      }catch(e){ return; } // cancelled
+      importJob(await (await handle.getFile()).text(), handle);
+    }else{
+      $("#fileLoad").click();
+    }
+  });
   $("#fileLoad").addEventListener("change", ev => {
     const f = ev.target.files[0];
     if(!f) return;
     const rd = new FileReader();
-    rd.onload = () => {
-      let s;
-      try{
-        s = normalizeState(JSON.parse(rd.result));
-      }catch(e){ s = null; }
-      if(!s){
-        toast("That file isn't an IACT100 backup.");
-        return;
-      }
-      // point the live state at the backup BEFORE persisting: the reload
-      // fires pagehide -> flushSave, which must not write the old checklist
-      // back over the one we just loaded
-      state = s;
-      try{
-        localStorage.setItem(LS_KEY, JSON.stringify(s));
-      }catch(e){
-        toast("Can't load the backup — this browser is blocking storage (private mode or full storage).");
-        return;
-      }
-      location.reload();
-    };
+    rd.onload = () => importJob(rd.result, null);
     rd.readAsText(f);
     ev.target.value = "";
   });
   $("#btnPrint").addEventListener("click", () => { buildPrintDoc(); window.print(); });
-  $("#btnNew").addEventListener("click", () => {
-    if(!confirm("Start a new blank checklist? The current one is cleared from this device — print or back it up first if you need it.")) return;
-    state = freshState();
-    localStorage.setItem(LS_KEY, JSON.stringify(state));
-    location.reload();
+  $("#btnJobs").addEventListener("click", () => {
+    flushSave();
+    renderJobs();
+    $("#jobsModal").hidden = false;
+  });
+  $("#btnJobsClose").addEventListener("click", () => { $("#jobsModal").hidden = true; });
+  $("#jobsModal").addEventListener("click", ev => {
+    if(ev.target === $("#jobsModal")) $("#jobsModal").hidden = true;
+  });
+  document.addEventListener("keydown", ev => {
+    if(ev.key === "Escape") $("#jobsModal").hidden = true;
+  });
+  $("#btnNewJob").addEventListener("click", () => {
+    switchToState(freshState(), newId());
+    $("#jobsModal").hidden = true;
+    toast("New checklist started — the previous one is saved under Jobs.");
   });
 }
 
