@@ -25,9 +25,10 @@ static files.
 
 ### Workflow
 
-1. Fill in the **job header**: customer, contract number, items covered,
-   date, tester name and initials. Your initials are stamped automatically
-   against every item you mark.
+1. Fill in the **job header**: customer, contract number, item number,
+   date, tester name and initials. One checklist is completed per
+   shippable item. Your initials are stamped automatically against every
+   line you mark.
 2. Work through the four parts (tabs, mirroring the paper form):
    Pre-Test / Inspection · Routine Tests EN60204/EN61439 ·
    Functional Test / Validation · Final Inspection.
