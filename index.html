@@ -538,12 +538,23 @@ function freshState(){
     early:{ director:"", date:"", comments:"" }
   };
 }
+/* Fill in anything missing from a stored/imported state so a truncated or
+   hand-edited backup can never crash the app. */
+function normalizeState(s){
+  if(!s || typeof s !== "object" || s.v !== 1) return null;
+  const f = freshState();
+  return {
+    v:1,
+    meta: Object.assign(f.meta, (s.meta && typeof s.meta === "object") ? s.meta : {}),
+    rows: (s.rows && typeof s.rows === "object") ? s.rows : {},
+    signoffs: (s.signoffs && typeof s.signoffs === "object") ? s.signoffs : {},
+    early: Object.assign(f.early, (s.early && typeof s.early === "object") ? s.early : {})
+  };
+}
 function loadState(){
   try{
     const raw = localStorage.getItem(LS_KEY);
-    if(!raw) return null;
-    const s = JSON.parse(raw);
-    return (s && s.v === 1) ? s : null;
+    return raw ? normalizeState(JSON.parse(raw)) : null;
   }catch(e){ return null; }
 }
 let state = loadState() || freshState();
@@ -555,11 +566,26 @@ function writeStore(){
     const t = new Date();
     $("#savedTick").textContent =
       `Saved ${String(t.getHours()).padStart(2,"0")}:${String(t.getMinutes()).padStart(2,"0")}`;
-  }catch(e){ /* private-mode storage refusal: exports still work */ }
+  }catch(e){
+    $("#savedTick").textContent = "Not saving!";
+    if(!writeStore.warned){
+      writeStore.warned = true;
+      toast("This browser is blocking saving (private mode or full storage) — use Backup before closing or entries will be lost.");
+    }
+  }
 }
+/* Same checklist open in another tab/window: last save wins, so warn. */
+let crossTabWarnedAt = 0;
+window.addEventListener("storage", ev => {
+  if(ev.key !== LS_KEY || ev.newValue === null) return;
+  if(Date.now() - crossTabWarnedAt > 60000){
+    crossTabWarnedAt = Date.now();
+    toast("This checklist is also open in another tab or window — whichever saves last wins.");
+  }
+});
 function save(){
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(writeStore, 250);
+  saveTimer = setTimeout(() => { saveTimer = null; writeStore(); }, 250);
 }
 function flushSave(){
   if(saveTimer){ clearTimeout(saveTimer); saveTimer = null; writeStore(); }
@@ -613,6 +639,11 @@ function setStatus(key, status){
   }
   save();
   refresh();
+  // a snag needs describing — put the cursor straight in the comment box
+  if(rs.status === "snag" && !(rs.comment || "").trim()){
+    const com = rowEls[key] && rowEls[key].rowEl.querySelector(".rcomment");
+    if(com){ com.placeholder = "Describe the snag…"; com.focus(); }
+  }
 }
 
 function buildRow(sec, row, part){
@@ -871,6 +902,8 @@ function buildSignoff(p){
 function activatePart(idx){
   partEls.forEach((s, i) => s.classList.toggle("active", i === idx));
   tabEls.forEach((t, i) => t.classList.toggle("active", i === idx));
+  if(tabEls[idx].scrollIntoView)
+    tabEls[idx].scrollIntoView({ block:"nearest", inline:"nearest" });
 }
 
 /* ---------- refresh (state -> DOM) ---------- */
@@ -976,15 +1009,25 @@ function bindToolbar(){
     if(!f) return;
     const rd = new FileReader();
     rd.onload = () => {
+      let s;
       try{
-        const s = JSON.parse(rd.result);
-        if(!s || s.v !== 1) throw new Error("wrong format");
-        state = s;
-        localStorage.setItem(LS_KEY, JSON.stringify(state));
-        location.reload();
-      }catch(e){
+        s = normalizeState(JSON.parse(rd.result));
+      }catch(e){ s = null; }
+      if(!s){
         toast("That file isn't an IACT100 backup.");
+        return;
       }
+      // point the live state at the backup BEFORE persisting: the reload
+      // fires pagehide -> flushSave, which must not write the old checklist
+      // back over the one we just loaded
+      state = s;
+      try{
+        localStorage.setItem(LS_KEY, JSON.stringify(s));
+      }catch(e){
+        toast("Can't load the backup — this browser is blocking storage (private mode or full storage).");
+        return;
+      }
+      location.reload();
     };
     rd.readAsText(f);
     ev.target.value = "";
