@@ -1,5 +1,5 @@
 /* IACT100 checklist service worker: cache-first so the app opens with no signal in the workshop. */
-const CACHE = "iact100-v1";
+const CACHE = "iact100-v2";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 
