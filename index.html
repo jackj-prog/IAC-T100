@@ -234,7 +234,10 @@
     @page{size:A4;margin:11mm 12mm 15mm}
     .topbar,main,footer,#toast{display:none !important}
     body{background:#fff}
-    #printDoc{display:block;color:#000;font:10pt/1.25 "Times New Roman",Times,serif}
+    /* 2mm inset keeps the outer borders clear of the printable-area edge,
+       where print engines clip hairlines */
+    #printDoc{display:block;color:#000;padding:0 2mm;
+      font:10pt/1.25 "Times New Roman",Times,serif}
     #printDoc .pp{page-break-after:always}
     #printDoc .pp:last-child{page-break-after:auto}
     /* Separate borders, each cell owning its left+bottom edge: collapsed
@@ -332,7 +335,7 @@
   <p>Entries are saved automatically on this device only — use <strong>Print / PDF</strong> to file the
   completed T100 form and <strong>Backup</strong> to keep or transfer the raw record.</p>
   <p class="foot-co">Industrial Automation &amp; Control Limited · Digital transcription of form
-  QAP07_04_17 (IACT100 Checklist)</p>
+  QAP07_04_17 (IACT100 Checklist) · <span id="buildTag"></span></p>
 </footer>
 
 <div id="toast" role="status" aria-live="polite"></div>
@@ -348,6 +351,7 @@
    ================================================================ */
 
 const DOC_REF = "QAP07_04_17";
+const APP_BUILD = "build 7"; // bump with the sw.js CACHE version on every release
 
 const CHECKLIST = [
   { part:1, title:"Pre-Test / Inspection", short:"Pre-Test / Inspection", sections:[
@@ -1170,6 +1174,7 @@ bindMeta();
 buildParts();
 bindToolbar();
 refresh();
+$("#buildTag").textContent = APP_BUILD;
 
 if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
   navigator.serviceWorker.register("sw.js").catch(() => {});
