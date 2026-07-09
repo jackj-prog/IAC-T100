@@ -32,13 +32,13 @@ static files.
 2. Work through the four parts (tabs, mirroring the paper form):
    Pre-Test / Inspection · Routine Tests EN60204/EN61439 ·
    Functional Test / Validation · Final Inspection.
-3. Each item: **✓ checked**, **N/A** or **✗ snag**, plus a comment box
-   usable on passing items too (test values, document references, etc.).
-   Rows 3.7.1–3.7.5 are write-in rows; 4.13 takes the Director's
-   early-release approval. Each section header has **✓ mark remaining**
-   and **N/A remaining** buttons that stamp every still-unmarked item in
-   that section at once — handy when a whole section is complete or does
-   not apply. Neither overrides items already marked.
+3. Each item is marked **✓ checked** or **N/A** (not applicable) — this is
+   an inspection check, not a pass/fail test — plus a comment box for test
+   values, document references, etc. Rows 3.7.1–3.7.5 are write-in rows;
+   4.13 takes the Director's early-release approval. Each section header
+   has **✓ mark remaining** and **N/A remaining** buttons that stamp every
+   still-unmarked item in that section at once — handy when a whole section
+   is complete or does not apply. Neither overrides items already marked.
 4. **Sign off each part** — it warns if items are still unmarked.
 5. **Print / PDF** regenerates the record as the original T100 document
    (Times New Roman, boxed tables, sign-off lines, document number) and
@@ -67,5 +67,5 @@ devices on its own.
 ## Ideas for later
 
 - Central storage (shared folder or small server) so any device can pick up
-  any job, plus a master log of completed tests to spot recurring snags.
-- Photo attachments against snag items and per-panel history.
+  any job, plus a master log of completed tests.
+- Photo attachments against items and per-panel history.

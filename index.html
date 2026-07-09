@@ -57,8 +57,6 @@
   .progress-bar i{display:block;height:100%;width:0;background:var(--green);border-radius:3px}
   @media (prefers-reduced-motion: no-preference){ .progress-bar i{transition:width .25s ease} }
   #progressText{font-size:12.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
-  #snagChip{display:none;font-size:12px;font-weight:600;color:var(--red-ink);background:var(--red-soft);
-    border:1px solid var(--red);border-radius:999px;padding:2px 10px;white-space:nowrap}
   .top-actions{display:flex;gap:7px;flex-wrap:wrap}
   .btn{
     display:inline-flex;align-items:center;gap:7px;
@@ -112,8 +110,6 @@
   .tab.active{border-color:var(--red)}
   .tab.active .tnum{background:var(--red);color:#fff}
   .tab.done .cnt{color:var(--green)}
-  .tab.has-snag .cnt{color:var(--red-ink)}
-  .tab.has-snag .bar i{background:var(--red)}
 
   /* ---------- parts / sections ---------- */
   .part{display:none}
@@ -139,7 +135,6 @@
   .row{display:grid;grid-template-columns:64px 1fr 236px;gap:0;border-bottom:1px solid var(--line)}
   .row:last-child{border-bottom:0}
   .row:hover{background:color-mix(in srgb, var(--panel-2) 70%, transparent)}
-  .row.snagged, .row.snagged:hover{background:var(--red-soft)}
   .row.ok-d, .row.ok-d:hover{background:color-mix(in srgb, var(--green-soft) 45%, transparent)}
   .rno{padding:11px 8px 11px 14px;font-size:13px;color:var(--muted)}
   .rbody{padding:10px 12px 10px 0;display:flex;flex-direction:column;gap:7px;min-width:0}
@@ -160,11 +155,9 @@
   .sbtn:hover{color:var(--ink)}
   .sbtn.ok[aria-pressed="true"]{background:var(--green);color:#fff}
   .sbtn.na[aria-pressed="true"]{background:var(--na);color:#fff}
-  .sbtn.snag[aria-pressed="true"]{background:var(--red);color:#fff}
   .stamp{font-size:12px;color:var(--muted);min-height:16px;font-variant-numeric:tabular-nums}
   .stamp.ok{color:var(--green);font-weight:600}
   .stamp.na{color:var(--na);font-weight:600}
-  .stamp.snag{color:var(--red-ink);font-weight:700}
   @media (max-width:720px){
     .row{grid-template-columns:52px 1fr}
     .rctl{grid-column:1 / -1;flex-direction:row;align-items:center;justify-content:flex-end;
@@ -263,7 +256,6 @@
     #printDoc td.pt-sec{text-align:center;font-weight:700;font-size:11pt;padding:11pt 4pt}
     #printDoc td.c-by{text-align:center}
     #printDoc .p-hint{font-size:6.5pt;line-height:1.15}
-    #printDoc .p-snag{font-weight:700}
     #printDoc td.pt-foot{text-align:center;font-weight:700;padding:9pt 4pt}
     #printDoc td.pt-dir{font-weight:700}
     #printDoc td.pe-box{height:26mm}
@@ -290,7 +282,6 @@
   <div class="progress-wrap">
     <div class="progress-bar" aria-hidden="true"><i id="progressFill"></i></div>
     <span id="progressText">0 / 0</span>
-    <span id="snagChip"></span>
     <span id="savedTick"></span>
   </div>
   <div class="top-actions">
@@ -353,7 +344,7 @@
    ================================================================ */
 
 const DOC_REF = "QAP07_04_17";
-const APP_BUILD = "build 9"; // bump with the sw.js CACHE version on every release
+const APP_BUILD = "build 10"; // bump with the sw.js CACHE version on every release
 
 const CHECKLIST = [
   { part:1, title:"Pre-Test / Inspection", short:"Pre-Test / Inspection", sections:[
@@ -610,7 +601,7 @@ function rowState(k){
   return state.rows[k];
 }
 
-const rowEls = {};   // key -> {btns:{ok,na,snag}, stamp, rowEl}
+const rowEls = {};   // key -> {btns:{ok,na}, stamp, rowEl}
 const tabEls = [];
 const partEls = [];
 const signoffEls = {}; // part -> {card, stampEl, input, btn, outEl}
@@ -650,11 +641,6 @@ function setStatus(key, status){
   }
   save();
   refresh();
-  // a snag needs describing — put the cursor straight in the comment box
-  if(rs.status === "snag" && !(rs.comment || "").trim()){
-    const com = rowEls[key] && rowEls[key].rowEl.querySelector(".rcomment");
-    if(com){ com.placeholder = "Describe the snag…"; com.focus(); }
-  }
 }
 
 function buildRow(sec, row, part){
@@ -703,8 +689,7 @@ function buildRow(sec, row, part){
   const btns = {};
   for(const [st, label, title] of [
     ["ok", "✓", "Mark checked"],
-    ["na", "N/A", "Mark not applicable"],
-    ["snag", "✗", "Mark snag / fail"]
+    ["na", "N/A", "Mark not applicable"]
   ]){
     const b = el("button", `sbtn ${st}`, label);
     b.type = "button";
@@ -863,7 +848,7 @@ function refreshEarly(){
 }
 
 function partCounts(p){
-  let total = 0, done = 0, snag = 0;
+  let total = 0, done = 0;
   for(const sec of p.sections)
     for(const row of sec.rows){
       if(row.note) continue;
@@ -871,9 +856,8 @@ function partCounts(p){
       if(row.optional && !(rs.text || "").trim() && !rs.status) continue;
       total++;
       if(rs.status) done++;
-      if(rs.status === "snag") snag++;
     }
-  return { total, done, snag };
+  return { total, done };
 }
 
 function buildSignoff(p){
@@ -933,9 +917,8 @@ function refresh(){
         const ui = rowEls[row.k];
         if(!ui) continue;
         const rs = state.rows[row.k] || {};
-        for(const st of ["ok", "na", "snag"])
+        for(const st of ["ok", "na"])
           ui.btns[st].setAttribute("aria-pressed", String(rs.status === st));
-        ui.rowEl.classList.toggle("snagged", rs.status === "snag");
         ui.rowEl.classList.toggle("ok-d", rs.status === "ok");
         if(rs.status){
           ui.stamp.textContent = `${rs.by || "—"} · ${fmtDate(rs.date)}`;
@@ -946,16 +929,15 @@ function refresh(){
         }
       }
 
-  let gTotal = 0, gDone = 0, gSnag = 0;
+  let gTotal = 0, gDone = 0;
   CHECKLIST.forEach((p, i) => {
     const c = partCounts(p);
-    gTotal += c.total; gDone += c.done; gSnag += c.snag;
+    gTotal += c.total; gDone += c.done;
     const tab = tabEls[i];
     tab.querySelector(".cnt").textContent = `${c.done}/${c.total}`;
     tab.querySelector(".bar i").style.width =
       c.total ? `${Math.round(100 * c.done / c.total)}%` : "0";
     tab.classList.toggle("done", c.done === c.total && c.total > 0);
-    tab.classList.toggle("has-snag", c.snag > 0);
 
     const so = state.signoffs[p.part];
     const ui = signoffEls[p.part];
@@ -979,13 +961,6 @@ function refresh(){
   });
   $("#progressFill").style.width = gTotal ? `${Math.round(100 * gDone / gTotal)}%` : "0";
   $("#progressText").textContent = `${gDone} / ${gTotal}`;
-  const chip = $("#snagChip");
-  if(gSnag > 0){
-    chip.style.display = "inline-block";
-    chip.textContent = `${gSnag} snag${gSnag === 1 ? "" : "s"}`;
-  }else{
-    chip.style.display = "none";
-  }
 }
 
 /* ---------- meta binding ---------- */
@@ -1079,10 +1054,7 @@ function decoratePrint(t){
 }
 function printCommentCell(row, rs){
   const c = rs.comment || "";
-  let v;
-  if(rs.status === "na") v = "N/A" + (c ? " — " + esc(c) : "");
-  else if(rs.status === "snag") v = `<span class="p-snag">SNAG${c ? ":" : ""}</span> ` + esc(c);
-  else v = esc(c);
+  let v = rs.status === "na" ? "N/A" + (c ? " — " + esc(c) : "") : esc(c);
   if(row.hint) v = `<div class="p-hint">Document Reference</div>` + v;
   return v;
 }
