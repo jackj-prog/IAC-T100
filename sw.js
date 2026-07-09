@@ -2,7 +2,7 @@
    Page loads are network-first so a new release shows up on the FIRST visit,
    falling back to cache when the workshop has no signal. Static assets are
    cache-first. Bump CACHE together with APP_BUILD in index.html. */
-const CACHE = "iact100-v11";
+const CACHE = "iact100-v12";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 
