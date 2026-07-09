@@ -257,7 +257,7 @@
     #printDoc td.c-by{text-align:center}
     #printDoc .p-hint{font-size:6.5pt;line-height:1.15}
     #printDoc td.pt-foot{text-align:center;font-weight:700;padding:9pt 4pt}
-    #printDoc td.pt-dir{font-weight:700}
+    #printDoc td.pt-dir{font-weight:700;text-align:center}
     #printDoc td.pe-box{height:26mm}
     #printDoc td.pt-sign{padding:20pt 6pt 12pt}
     #printDoc .s-in{display:flex;gap:34pt;font-size:11pt}
@@ -346,7 +346,7 @@
    ================================================================ */
 
 const DOC_REF = "QAP07_04_17";
-const APP_BUILD = "build 11"; // bump with the sw.js CACHE version on every release
+const APP_BUILD = "build 12"; // bump with the sw.js CACHE version on every release
 
 const CHECKLIST = [
   { part:1, title:"Pre-Test / Inspection", short:"Pre-Test / Inspection", sections:[
@@ -1162,8 +1162,8 @@ function buildPrintDoc(){
     if(p.part === 4){
       const e = state.early || {};
       closing += `<tr><td>4.13</td><td><b>Approval for early release</b></td>` +
-        `<td colspan="2" class="pt-dir">Director Signature&nbsp;&nbsp;` +
-        `${esc(e.director || "")}${e.date ? " — " + fmtDate(e.date) : ""}</td></tr>`;
+        `<td class="pt-dir">Director Signature</td>` +
+        `<td>${esc(e.director || "")}${e.date ? " — " + fmtDate(e.date) : ""}</td></tr>`;
       closing += `<tr><td colspan="4" class="pt-sec">Comments for early release</td></tr>`;
       closing += `<tr><td colspan="4" class="pe-box">${esc(e.comments || "")}</td></tr>`;
       const foot = p.sections[0].foot;
