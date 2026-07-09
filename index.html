@@ -263,6 +263,8 @@
     #printDoc .s-in{display:flex;gap:34pt;font-size:11pt}
     #printDoc .s-in .sig{display:inline-block;min-width:50mm;border-bottom:0.9pt solid #000;padding:0 4pt 1pt}
     #printDoc .pt tr{page-break-inside:avoid}
+    /* keep a section heading with its first item so it never orphans */
+    #printDoc .pt tbody.keep{break-inside:avoid;page-break-inside:avoid}
     #printDoc .pt thead{display:table-header-group}
     #printDoc .pt tfoot{display:table-footer-group}
     #printDoc .pt tfoot td{border:none;text-align:right;padding:5pt 0 0;
@@ -344,7 +346,7 @@
    ================================================================ */
 
 const DOC_REF = "QAP07_04_17";
-const APP_BUILD = "build 10"; // bump with the sw.js CACHE version on every release
+const APP_BUILD = "build 11"; // bump with the sw.js CACHE version on every release
 
 const CHECKLIST = [
   { part:1, title:"Pre-Test / Inspection", short:"Pre-Test / Inspection", sections:[
@@ -1061,44 +1063,71 @@ function printCommentCell(row, rs){
 const PRINT_ITEM_HEAD =
   `<tr><th colspan="2">Item</th><th>Checked By</th><th>Comments</th></tr>`;
 
+/* Render one section as: a "keep" tbody holding the section heading (band /
+   title / column header) plus its first item so the heading can never be
+   orphaned at a page foot, then a second tbody with the remaining items so
+   long sections still flow across pages. Row-spanning items (1.1, 1.2) are
+   emitted whole, since a rowspan can't cross a tbody boundary. */
 function printSection(p, sec, out){
-  if(sec.banner) out.push(`<tr><td colspan="4" class="pt-ban">${esc(sec.banner)}</td></tr>`);
-  if(sec.title) out.push(`<tr><td colspan="4" class="pt-sec">${esc(sec.title)}</td></tr>`);
-  if(sec.banner || sec.title) out.push(PRINT_ITEM_HEAD);
   const rows = sec.rows;
+
+  // group data rows into units: a numbered item carries its continuation rows
+  const units = [];
   for(let i = 0; i < rows.length; i++){
     const row = rows[i];
     if(row.note){
-      out.push(`<tr><td></td><td colspan="3">${esc(row.note)}</td></tr>`);
+      units.push(`<tr><td></td><td colspan="3">${esc(row.note)}</td></tr>`);
       continue;
     }
-    // a numbered row's cell spans its unnumbered continuation rows (1.1, 1.2)
     let span = 1;
-    if(row.n){
-      let j = i + 1;
-      while(j < rows.length && !rows[j].note && rows[j].n === ""){ span++; j++; }
+    while(i + span < rows.length && !rows[i + span].note && rows[i + span].n === "") span++;
+    let html = "";
+    for(let k = 0; k < span; k++){
+      const r = rows[i + k];
+      const rs = state.rows[r.k] || {};
+      const text = r.editable
+        ? esc(rs.text || "")
+        : (r.lead ? `<b>${esc(r.lead)}</b> ${decoratePrint(esc(r.t))}`
+                  : decoratePrint(esc(r.t)));
+      const numCell = k === 0
+        ? `<td${span > 1 ? ` rowspan="${span}"` : ""}>${esc(r.n)}</td>` : "";
+      html += `<tr>${numCell}<td>${text || "&nbsp;"}</td>` +
+        `<td class="c-by">${esc(rs.by || "")}</td><td>${printCommentCell(r, rs)}</td></tr>`;
     }
-    const rs = state.rows[row.k] || {};
-    const text = row.editable
-      ? esc(rs.text || "")
-      : (row.lead ? `<b>${esc(row.lead)}</b> ${decoratePrint(esc(row.t))}`
-                  : decoratePrint(esc(row.t)));
-    const numCell = row.n === "" ? "" :
-      `<td${span > 1 ? ` rowspan="${span}"` : ""}>${esc(row.n)}</td>`;
-    out.push(`<tr>${numCell}<td>${text || "&nbsp;"}</td>` +
-      `<td class="c-by">${esc(rs.by || "")}</td><td>${printCommentCell(row, rs)}</td></tr>`);
+    units.push(html);
+    i += span - 1;
   }
+
+  // trailing notes and section footnote flow with the remaining items
+  const trailing = [];
   if(sec.notes && sec.notes.length){
     const head = sec.notes.slice(0, -1);
     const last = sec.notes[sec.notes.length - 1];
     if(head.length)
-      out.push(`<tr><td><u>Note</u></td><td colspan="3">` +
+      trailing.push(`<tr><td><u>Note</u></td><td colspan="3">` +
         head.map(n => decoratePrint(esc(n))).join("<br><br>") + `</td></tr>`);
-    out.push(`<tr><td>${head.length ? "" : "<u>Note</u>"}</td>` +
+    trailing.push(`<tr><td>${head.length ? "" : "<u>Note</u>"}</td>` +
       `<td colspan="3">${decoratePrint(esc(last))}</td></tr>`);
   }
   if(sec.foot && p.part !== 4)
-    out.push(`<tr><td colspan="4" class="pt-foot">${esc(sec.foot)}</td></tr>`);
+    trailing.push(`<tr><td colspan="4" class="pt-foot">${esc(sec.foot)}</td></tr>`);
+
+  let heading = "";
+  if(sec.banner) heading += `<tr><td colspan="4" class="pt-ban">${esc(sec.banner)}</td></tr>`;
+  if(sec.title) heading += `<tr><td colspan="4" class="pt-sec">${esc(sec.title)}</td></tr>`;
+  heading += PRINT_ITEM_HEAD;
+
+  const body = units.join("") + trailing.join("");
+  // Short sections stay whole on one page (matching the paper form's grouping);
+  // long ones (many items) may break, but the heading + first item are always
+  // held together so a section title can never orphan at a page foot.
+  if(units.length <= 12){
+    out.push(`<tbody class="keep">${heading}${body}</tbody>`);
+  }else{
+    out.push(`<tbody class="keep">${heading}${units[0] || ""}</tbody>`);
+    const rest = units.slice(1).join("") + trailing.join("");
+    if(rest) out.push(`<tbody>${rest}</tbody>`);
+  }
 }
 
 function buildPrintDoc(){
@@ -1124,28 +1153,29 @@ function buildPrintDoc(){
         `${meta.items ? " — Item: " + esc(meta.items) : ""}</span>` +
         `<span>Date: ${fmtDate(meta.date)}</span></div></td></tr>`);
     }
-    out.push(PRINT_ITEM_HEAD);
     out.push(`</thead><tfoot><tr><td colspan="4">Document No ` +
-      `<b>${DOC_REF}.doc</b></td></tr></tfoot><tbody>`);
+      `<b>${DOC_REF}.doc</b></td></tr></tfoot>`);
     for(const sec of p.sections) printSection(p, sec, out);
 
+    // closing block (early release for part 4, then the sign-off) kept together
+    let closing = "";
     if(p.part === 4){
       const e = state.early || {};
-      out.push(`<tr><td>4.13</td><td><b>Approval for early release</b></td>` +
+      closing += `<tr><td>4.13</td><td><b>Approval for early release</b></td>` +
         `<td colspan="2" class="pt-dir">Director Signature&nbsp;&nbsp;` +
-        `${esc(e.director || "")}${e.date ? " — " + fmtDate(e.date) : ""}</td></tr>`);
-      out.push(`<tr><td colspan="4" class="pt-sec">Comments for early release</td></tr>`);
-      out.push(`<tr><td colspan="4" class="pe-box">${esc(e.comments || "")}</td></tr>`);
+        `${esc(e.director || "")}${e.date ? " — " + fmtDate(e.date) : ""}</td></tr>`;
+      closing += `<tr><td colspan="4" class="pt-sec">Comments for early release</td></tr>`;
+      closing += `<tr><td colspan="4" class="pe-box">${esc(e.comments || "")}</td></tr>`;
       const foot = p.sections[0].foot;
-      if(foot) out.push(`<tr><td colspan="4" class="pt-foot">${esc(foot)}</td></tr>`);
+      if(foot) closing += `<tr><td colspan="4" class="pt-foot">${esc(foot)}</td></tr>`;
     }
-
     const so = state.signoffs[p.part];
-    out.push(`<tr><td colspan="4" class="pt-sign"><div class="s-in">` +
+    closing += `<tr><td colspan="4" class="pt-sign"><div class="s-in">` +
       `<span><b>Signed :</b> <span class="sig">${so ? esc(so.name) : "&nbsp;"}</span></span>` +
       `<span><b>Date :</b> <span class="sig">${so ? fmtDate(so.date) : "&nbsp;"}</span></span>` +
-      `</div></td></tr>`);
-    out.push(`</tbody></table></section>`);
+      `</div></td></tr>`;
+    out.push(`<tbody class="keep">${closing}</tbody>`);
+    out.push(`</table></section>`);
   }
   $("#printDoc").innerHTML = out.join("");
 }
